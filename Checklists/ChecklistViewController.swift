@@ -52,6 +52,7 @@ class ChecklistViewController: UITableViewController, ItemDetailViewControllerDe
         
         if item.checked {
             label.text = "√"
+            label.textColor = view.tintColor
         } else {
             label.text = ""
         }

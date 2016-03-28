@@ -11,20 +11,44 @@ import UIKit
 class Checklist: NSObject, NSCoding {
     var name = ""
     var items = [ChecklistItem]()
+    var iconName: String
     
-    init(name: String) {
+    convenience init(name: String) {
+        self.init(name: name, iconName: "No Icon")
+    }
+    
+    init(name: String, iconName: String) {
         self.name = name
-        super.init()
+        self.iconName = iconName
     }
     
     required init?(coder aDecoder: NSCoder) {
-        name = aDecoder.decodeObjectForKey("Name") as! String
-        items = aDecoder.decodeObjectForKey("Items") as! [ChecklistItem]
+        self.name = ""
+        self.items = [ChecklistItem]()
+        self.iconName = ""
+        
         super.init()
+        
+        guard let name = aDecoder.decodeObjectForKey("Name") as? String else { return nil }
+        guard let items = aDecoder.decodeObjectForKey("Items") as? [ChecklistItem] else { return nil }
+        guard let iconName = aDecoder.decodeObjectForKey("IconName") as? String else { return nil }
+        
+        self.name = name
+        self.items = items
+        self.iconName = iconName
     }
     
     func encodeWithCoder(aCoder: NSCoder) {
         aCoder.encodeObject(name, forKey: "Name")
         aCoder.encodeObject(items, forKey: "Items")
+        aCoder.encodeObject(iconName, forKey: "IconName")
+    }
+    
+    func countUncheckedItems() -> Int {
+        var count = 0
+        for item in items where !item.checked {
+            count += 1
+        }
+        return count 
     }
 }

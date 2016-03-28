@@ -22,6 +22,11 @@ class AllListsViewController: UITableViewController, ListDetailViewControllerDel
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
     
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadData()
+    }
+    
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -44,6 +49,7 @@ class AllListsViewController: UITableViewController, ListDetailViewControllerDel
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dataModel.lists.count
     }
+    
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = cellForTableView(tableView)
@@ -52,6 +58,16 @@ class AllListsViewController: UITableViewController, ListDetailViewControllerDel
         cell.textLabel!.text = checklist.name
         cell.accessoryType = .DetailDisclosureButton
         
+        // add count property to subittle label
+        let count = checklist.countUncheckedItems()
+        if checklist.items.count == 0 {
+            cell.detailTextLabel!.text = "(No Items)"
+        } else if count == 0 {
+            cell.detailTextLabel!.text = "All Done!"
+        } else {
+            cell.detailTextLabel!.text = "\(count) Remaining"
+        }
+        cell.imageView!.image = UIImage(named: checklist.iconName)
         return cell
     }
     
@@ -60,7 +76,7 @@ class AllListsViewController: UITableViewController, ListDetailViewControllerDel
         if let cell = tableView.dequeueReusableCellWithIdentifier(cellIdentifier) {
             return cell
         } else {
-            return UITableViewCell(style: .Default, reuseIdentifier: cellIdentifier)
+            return UITableViewCell(style: .Subtitle, reuseIdentifier: cellIdentifier)
         }
     }
     
@@ -92,20 +108,14 @@ class AllListsViewController: UITableViewController, ListDetailViewControllerDel
     func listDetailViewController(controller: ListDetailViewController, didFinishAddingChecklist checklist: Checklist) {
         let newRowIndex = dataModel.lists.count
         dataModel.lists.append(checklist)
-        
-        let indexPath = NSIndexPath(forRow: newRowIndex, inSection: 0)
-        let indexPaths = [indexPath]
-        tableView.insertRowsAtIndexPaths(indexPaths, withRowAnimation: .Automatic)
+        dataModel.sortChecklists()
+        tableView.reloadData()
         dismissViewControllerAnimated(true, completion: nil)
     }
     
     func listDetailViewController(controller: ListDetailViewController, didFinishEditingChecklist checklist: Checklist) {
-        if let index = dataModel.lists.indexOf(checklist) {
-            let indexPath = NSIndexPath(forRow: index, inSection: 0)
-            if let cell = tableView.cellForRowAtIndexPath(indexPath) {
-                cell.textLabel!.text = checklist.name
-            }
-        }
+        dataModel.sortChecklists()
+        tableView.reloadData()
         dismissViewControllerAnimated(true, completion: nil)
     }
     

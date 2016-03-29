@@ -25,8 +25,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let notificationSettings = UIUserNotificationSettings(forTypes: [.Alert, .Sound], categories: nil)
         UIApplication.sharedApplication().registerUserNotificationSettings(notificationSettings)
+        
+//        let date = NSDate(timeIntervalSinceNow: 10)
+        
+//        let localNotification = UILocalNotification()
+//        localNotification.fireDate = date
+//        localNotification.timeZone = NSTimeZone.defaultTimeZone()
+//        localNotification.alertBody = "Local notification checking in here!"
+//        localNotification.soundName = UILocalNotificationDefaultSoundName
+//        UIApplication.sharedApplication().scheduleLocalNotification(localNotification)
+//        
+        
+        
+        
+        
+        
         return true
     }
+    
 
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -51,6 +67,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func saveData() {
         dataModel.saveChecklists()
+    }
+    
+    func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
+        print("didReceiveLocalNotification \(notification)")
     }
 
 
